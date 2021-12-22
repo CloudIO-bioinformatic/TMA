@@ -1,0 +1,51 @@
+La instalación en este caso se realizará en ubuntu 16.04 y sirve para todas las distribuciones de debian 
+
+Instalacion de apache2
+1. Abrir la terminal y escribir $sudo apt-get install apache2
+Donde se instalarán las dependencias correspondientes.
+2.Luego de haberlo instalo se debe ejecutar el siguiente comando para dejar el servicio arriba $/etc/init.d/apache2 start
+y para detenerlo $/etc/init.d/apache2 stop, en este caso dejaremos el servicio arriba para que este funcionando $/etc/init.d/apache2 start
+3. Abrir navegador y escribir en la barra de esta localhost para conectarse manualmente,si estpa bien instalado se abrirá la página por defecto.
+4. Ingresamos al sistema como super usuario, y luego crearemos una carpeta para poder almacenar los archivos en nuestro home, por lo que escribiremos en la terminal $/home/paulina/public_html(donde dice paulina escribirá el nombre de su usuario), es aquí donde se almacenaran sus páginas.
+5. Ingresar al navegador y escribir en la barra del navegador "localhost/~paulina/public_html", ahí se almacenarán las páginas
+6. Para poder habilitar la visualización de archivos html debemos modificar un par de cosas, por lo debemos escribir ingresar como super usuario nuevamente $/etc/apache2/mods-enabled# ls. Donde esta el archivo "userdir.conf", con el editor que usted desee puede observar lo que contiene.
+8. Para habilitar escribirá $/etc/apache2/mods-enabled# a2enmod userdir (de este modo habilitamos el modulo)
+9. volver a reiniciar el servicio como se menciona en el punto 2.
+
+
+Instalación de postgresql (Base de datos)
+1. Primero se debe saber la distribución de debian, ingresar a la consola como super usuario y escribir $apt-cache show postgresql y observar donde dice version.
+2. Luego ingresar por consola $apt-cache show postgresql-client para comenzar la instalación.
+3. Instalación de los paquetes correspondiente $apt-get install postgresql postgresql-client, instalando las dependencias correspondientes estará listo.
+4. Mostrar la forma de como levantar y bajar el servicio $/etc/init.d/postgresql status y para detenerlo $/etc/init.d/postgresql stop, y para levantarlo $/etc/init.d/postgresql start
+Conexión a la base de datos del cliente
+1. Acceder como root.
+2. Para configurar postgres configuraremos (en este caso usaremos editor de texto vim, pero puede usar el que mas le acomode) $vim /etc/postgresql/9.5/main/pg_hba.conf (9.5 es la version de mi debian, tu debes colocar la version que te apareció), se abrirá un archivo bastante extenso pero iremos casi al final de este donde aparece "local   all   postgres   peer" cambiaremos peer por trust.
+3. Reiniciaremos el servicio $/etc/init.d/postgresql restart.
+4. Ingresamos a $psql -U postgres -W, e ingresamos una contraseña a través de # \password postgres e ingresamos una contraseña y salimos con \d
+5. Para configurar postgres configuraremos $vim /etc/postgresql/9.5/main/pg_hba.conf (9.5 es la version de mi debian, tu debes colocar la version que te aparecio, y tambien puedes utilizar el editor de texto que más que acomode en mi caso utilice vim), se abrirá un archivo bastante extenso pero iremos casi al final de este donde aparece "local   all   postgres   peer" cambiaremos peer por md5, esto es para no tener problemas con la contraseña.
+6. Reiniciaremos el servicio $/etc/init.d/postgresql restart.
+7. Ingresamos a la base de datos con el usuario postgres y la contraseña
+
+Instalación php7
+1.Abrir la consola e ingresar apt-get -y install php7.0 libapache2-mod-php7.0
+2. Para conectar pgsql con php ingresamos $sudo apt-get install php7-pgsql y $sudo apt-get install libapache2-mod-auth-pgsql.
+3. Debe reiniciar postgres y apache2 como se mencionan en los puntos anteriores.
+4. creamos un archivo llamado prueba.php que tendrá como código 
+"<?
+phpinfo();
+?>"
+y lo dejaremos en la carpeta personal en public_htm, abrir el navegador y escribir "localhost/usuario/public_html/prueba.php" y debe aparecer esta información.
+5.Instalar php-mcrypt(para poder encriptar)
+
+Luego de tener instalados todos los programas
+1. Se descargará la carpeta con nombre reunion que se encuentra comprimida, la descomprimirá y la dejará en la carpeta public_html (que fue creada durante la instalación de apache).
+2. Dentro de la carpeta donde se encuentran todos los archivos hay uno que dice reuniones_dump.sql, ese archivo lo dejará en la carpeta personal, es la base de datos que posteriormente se cargará.
+3. Abrir la consola e ingresar $pgsql -U postgres -W e ingresar la contraseña que se asigno en la instalacion de postgresql.
+	3.1 Crear una base de datos en este caso se llamará "reuniones" #create database reuniones;. 
+	3.2 Crear un usuario que en este caso se llamará "grupo7" #create user reunion with password '1234';, luego debemos dar los permisos al super usuario escribiendo #alter user reunion with superuser; de este modo le asignamos la contraseña 1234 y nuestro usuario funcionará como un super usuario.
+	nota: lo ideal es respetar los nombres asignados al super usuario y la base de datos para no tener problemas más adelante.
+	3.4 Salir de la base de datos con #/q;
+	3.5 Desde consola debe acceder a la carpeta personal y desde ella debe cargar la base de datos #pgsql -U reunion -W -h localhost reuniones < reuniones_dump.sql, luego ingresar la contraseña y ya está dentro de la base de datos.
+4. Abrir el navegador e ingresar "/localhost/usuario/reunion/" 
+5. De este modo conocerá como es el funcionamiento del programa en general. Como ingresar y utilizar el sistema de información web está detallado en el manual de usuario).
